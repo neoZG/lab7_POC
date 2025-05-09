@@ -15,4 +15,6 @@ jobs:
       - name: Start Flask
         run: flask run &
       - run: sleep 2
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
       - run: pytest --maxfail=1 --disable-warnings -q
