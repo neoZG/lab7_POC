@@ -119,13 +119,46 @@ After syncing:
 
 ---
 
+## 🧪 Ejecución Local de Pruebas
+
+Para facilitar las pruebas en sistemas Windows, se ha incluido un archivo de ejecución automática:
+
+### 📄 `run_tests.bat`
+
+Este script:
+
+1. Establece el `PYTHONPATH` correctamente para el entorno local.
+2. Ejecuta los tests definidos en `tests/test_fitness.py` usando `pytest`.
+3. Muestra en consola el resultado de las funciones de *fitness* (disponibilidad, rendimiento y sincronización).
+
+Para ejecutarlo:
+
+```bash
+.\run_tests.bat
+```
+
+---
+
+## ✅ Resultados de Prueba Reales
+
+Los siguientes son los resultados reales obtenidos al ejecutar `run_tests.bat` en un entorno Windows con hardware estándar (laptop de gama media, Python 3.10).
+
+| Fitness Function             | Resultado Obtenido                                        | Estado              | Justificación                                                                                                                                            |
+| ---------------------------- | --------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Disponibilidad**           | 100% de éxito en 100 intentos                             | ✅ Excelente         | Supera el umbral mínimo del 90% definido en la arquitectura.                                                                                             |
+| **Rendimiento (QPS)**        | 4.88 QPS                                                  | ⚠️ Ligeramente Bajo | Por debajo del umbral (>5 QPS), atribuible al uso de Flask en modo desarrollo sin multithreading ni WSGI server. Justificable para un entorno POC local. |
+| **Tiempo de sincronización** | 44.9 segundos para sincronizar nuevo contenido y usuarios | ✅ Excelente         | Muy por debajo del máximo aceptable de 1 hora definido.                                                                                                  |
+
+**Nota:** Se decidió no ajustar el umbral mínimo del test de rendimiento para reflejar fielmente las capacidades reales del entorno de prueba.
+
+---
+
 ## Fitness Function Tests
 
-We use automated tests to validate system behavior.
+We use automated tests to validate system behavior:
 
 ### Availability (≥ 90%)
 
-* File: `tests/test_fitness.py`
 * Simulates 100 sequential requests (login/content).
 * Asserts ≥ 90% success rate.
 
@@ -142,34 +175,24 @@ We use automated tests to validate system behavior.
 
 ---
 
-### Run All Tests
+### Run All Tests Manually (Linux/macOS)
 
-Make sure **no servers are already running**, then execute:
+If you're not using the `.bat`, run this from the root directory:
 
 ```bash
-pytest -s tests/test_fitness.py
+PYTHONPATH=. pytest -s -q tests/test_fitness.py
 ```
-
-Flags:
-
-* `-s` shows output (e.g., availability %, QPS, sync time).
-* All tests must pass for a successful build.
 
 ---
 
 ## CI Integration
 
-Tests automatically run on push/PR via GitHub Actions (`.github/workflows/ci.yml`).
+Tests automatically run on each push or pull request via GitHub Actions using the workflow at:
 
----
+```plaintext
+.github/workflows/ci.yml
+```
 
-## Future Improvements and Considerations
-
-* **Persistent Storage**: Move from in-memory to file or database (e.g., SQLite).
-* **Two-Way Sync**: Allow edge to send updates back to central.
-* **Security**: Use hashed passwords, JWTs, and API authentication.
-* **Scalability**: Deploy with Gunicorn or uWSGI behind reverse proxy.
-* **Error Handling**: Add retries, sync resume, and failure logging.
-* **Message Queue Integration**: Use RabbitMQ or MQTT for real offline-safe delivery.
+This ensures that all fitness functions are continuously validated in an automated pipeline.
 
 ---

@@ -1,0 +1,19 @@
+@echo off
+echo Starting Central Server...
+start cmd /k "python central_server/app.py"
+echo Waiting for Central Server to start...
+ping 127.0.0.1 -n 6 > nul
+
+echo Starting Edge Server...
+start cmd /k "python edge_server/app.py"
+echo Waiting for Edge Server to start...
+ping 127.0.0.1 -n 6 > nul
+
+echo Running tests...
+python -m pytest -s .\tests\test_fitness.py
+
+echo.
+echo Press any key to close all server windows...
+pause > nul
+
+taskkill /F /IM python.exe 

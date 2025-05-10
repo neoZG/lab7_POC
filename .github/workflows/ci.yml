@@ -25,4 +25,5 @@ jobs:
 
       - name: Run Tests (Pytest)
         run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
           pytest -s -q tests/test_fitness.py
